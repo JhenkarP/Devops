@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-10-09T04:48:01.052Z",
+  "amr": {
+    "source_records": 10000,
+    "normalized_records": 10000,
+    "genome_metadata_matches": 9652,
+    "genomes_with_resistance_feature_calls": 9641,
+    "resistance_feature_calls": 723827,
+    "deduplicated_records": 9999,
+    "conflicts": 2,
+    "missing_genome_feature_links": 11,
+    "split_counts": {
+      "temporal": 6237,
+      "laboratory": 9999,
+      "geography": 9999
+    }
+  },
+  "rare_disease": {
+    "source_annotations": 286651,
+    "disease_profiles": 12880,
+    "hpo_terms_indexed": 20482,
+    "hpo_graph_edges": 24436,
+    "generic_terms_removed": 3,
+    "robustness_samples": 100,
+    "sample_input_matches": 3
+  },
+  "warnings": [
+    "BV-BRC metadata provides collection and sequencing context, but the starter export still lacks linked resistance gene/mutation calls.",
+    "Rare-disease resources are knowledge annotations and public examples, not a patient validation cohort."
+  ]
+}

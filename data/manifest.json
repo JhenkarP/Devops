@@ -1,0 +1,104 @@
+{
+  "downloaded_at": "2026-10-08T13:31:41.461Z",
+  "sources": [
+    {
+      "name": "hp.json",
+      "url": "https://github.com/obophenotype/human-phenotype-ontology/releases/latest/download/hp.json",
+      "role": "HPO ontology reference",
+      "status": "downloaded",
+      "transport": "fetch",
+      "bytes": 21915519,
+      "sha256": "a7b3a012e7b4007a35a7cf8da35f2373b54cc16907f80d13d62470d31f833501"
+    },
+    {
+      "name": "hpo_annotations.hpoa",
+      "url": "https://purl.obolibrary.org/obo/hp/hpoa/phenotype.hpoa",
+      "role": "HPO disease annotations",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 35816037,
+      "sha256": "e89aa39c8f97bf5a52c5d160f9250a603681d630ade8ec2679d84ac5aece1f72"
+    },
+    {
+      "name": "mondo.json",
+      "url": "https://github.com/monarch-initiative/mondo/releases/latest/download/mondo.json",
+      "role": "MONDO disease ontology",
+      "status": "downloaded",
+      "transport": "fetch",
+      "bytes": 107871006,
+      "sha256": "ddbf0b88d8a91007ed55a01d579a418f68940f7f897d3dd55750ba966b3912ab"
+    },
+    {
+      "name": "monarch_disease_phenotype_associations.json",
+      "url": "https://api.monarchinitiative.org/v3/api/association/?limit=100",
+      "role": "Monarch disease-phenotype associations (bounded public export)",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 783736,
+      "sha256": "47f1c3a1a1af3856b59a013b7352102d09381961248e6696877c262b0204d359"
+    },
+    {
+      "name": "phenopacket-store.zip",
+      "url": "https://github.com/monarch-initiative/phenopacket-store/archive/refs/heads/main.zip",
+      "role": "Public Phenopacket examples and benchmark cases",
+      "status": "downloaded",
+      "transport": "fetch",
+      "bytes": 24171600,
+      "sha256": "d15e79ae7cd763bc47c7e90d2c0045097ab0398441f6c0d30133a52c70193f34"
+    },
+    {
+      "name": "orphadata_disease.xml",
+      "url": "https://www.orphadata.com/data/xml/en_product1.xml",
+      "role": "Orphadata disease resource (licensing subject to review)",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 54026799,
+      "sha256": "df8d562a0c6011af36a74eb4000ce81ca7d723e8031010819fb71727c0962bbb"
+    },
+    {
+      "name": "amrfinder_reference_genes.tsv",
+      "url": "https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/ReferenceGeneCatalog.txt",
+      "role": "AMRFinderPlus resistance reference catalog",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 2330416,
+      "sha256": "fa41ade01712841e639c91163243bace1c34755b927e69e0c8678540268a7fd4"
+    },
+    {
+      "name": "bvbrc_genome_metadata.json",
+      "url": "https://www.bv-brc.org/api/genome/?limit(1000)",
+      "role": "BV-BRC genome metadata (bounded export)",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 1819986,
+      "sha256": "d3951bd03e65102541bd7cc234523d0d044acaaa2a8020cb3fd605ab5e209d52"
+    },
+    {
+      "name": "bvbrc_genome_amr.json",
+      "url": "https://www.bv-brc.org/api/genome_amr/?limit(10000)",
+      "role": "BV-BRC antimicrobial resistance and susceptibility records (bounded export)",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 5546058,
+      "sha256": "4824d40f2caccc580c1bb8c093ed8d7c678d05503dacdc9cbbc31a627e272260"
+    },
+    {
+      "name": "ncbi_pathogen_resistance_metadata.json",
+      "url": "https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/version.txt",
+      "role": "NCBI pathogen resistance database version metadata",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 13,
+      "sha256": "43ad0274317a2cbf80e01626e3ae6084a02f471be2f870d57fdbe2d35761911a"
+    },
+    {
+      "name": "resfinder_db.zip",
+      "url": "https://bitbucket.org/genomicepidemiology/resfinder_db/get/master.zip",
+      "role": "ResFinder resistance reference annotations",
+      "status": "downloaded",
+      "transport": "curl-insecure-fallback",
+      "bytes": 821087,
+      "sha256": "526186759ae4e182fbb8b4a12e05dcaca9f5acf920db7a498a8fec9d78109109"
+    }
+  ]
+}

@@ -58,7 +58,7 @@ The product is research software. It is not a clinical diagnostic system and mus
 - [x] Add contract and build validation commands.
 - [x] Add health checks for every service.
 
-**Deliverable:** Frontend, backend, and contract checks start successfully with documented commands. Docker Compose configuration is ready but requires Docker Desktop to execute.
+**Deliverable:** Frontend, backend, and contract checks pass with documented commands. Docker Compose has been built and all four local services have been validated as healthy.
 
 ## Phase 2: Dataset Acquisition
 
@@ -107,7 +107,7 @@ Phase 2 progress:
 - [x] Docker Desktop installed and Compose runtime validated.
 - [x] Bounded phenotype-labelled AMR susceptibility starter export selected and downloaded.
 
-The downloaded BV-BRC AMR export contains phenotype labels and testing metadata, but it is only a bounded starter export. It still needs joining to resistance genes/mutations, normalization, deduplication, and a documented split before training or claiming model performance.
+The downloaded BV-BRC AMR export is a bounded 10,000-record starter cohort, not the full BV-BRC catalog. Phase 3 processing has normalized and deduplicated it, joined genome metadata, extracted resistance-associated features, and created split assignments. The current export does not include explicit mutations or genome sequences.
 
 ## Phase 3: Data Processing
 
@@ -129,15 +129,15 @@ The downloaded BV-BRC AMR export contains phenotype labels and testing metadata,
 
 The current BV-BRC AMR export does not contain isolate sequences, VCF files, or explicit mutation calls. This pilot adds a sequence-backed mutation layer without blocking the gene-feature baseline:
 
-- [x] Select 100 AMR-labelled genomes with downloadable assemblies.
-- [x] Resolve BV-BRC genome IDs to sequence accessions.
-- [ ] Download genome assemblies and record provenance and checksums.
+- [x] Generate AMR-linked candidates and resolve BV-BRC genome IDs to assembly accessions (110 candidates for a 100-sequence target).
+- [x] Download 100 NCBI assembly archives and record URLs and SHA-256 checksums.
+- [ ] Extract and verify 100 usable FASTA assemblies; current result is 99/100 because `GCA_002970785.1` returns 404 from NCBI.
 - [ ] Run AMRFinderPlus and PointFinder where the organism is supported.
 - [ ] Link verified mutation calls to genome IDs, antibiotics, and observed phenotypes.
 - [ ] Validate a representative sample and record coverage or missing-sequence limitations.
 - [ ] Expand mutation extraction to the eligible cohort after the pilot is validated.
 
-Phase 3A gene and resistance-feature processing is complete for the 10,000-record cohort. Phase 3B remains planned until sequence-backed mutation data is acquired.
+Phase 3A gene and resistance-feature processing is complete for the 10,000-record cohort. The verified report contains 10,000 source and normalized records, 9,999 deduplicated records, 9,652 metadata matches, and 723,827 resistance feature calls. Mutation analysis has not started. The processing report warning text must be refreshed to reflect the extracted feature calls accurately.
 
 ### Rare-disease processing
 
@@ -153,13 +153,17 @@ Phase 3A gene and resistance-feature processing is complete for the 10,000-recor
 
 ## Phase 4: Baseline Models
 
+Status: Not started. Build and evaluate the gene/resistance-feature-only baseline first. Add mutation features only after the Phase 3B pilot produces validated calls.
+
 ### AMR baseline
 
-- AMRFinderPlus marker lookup.
-- Logistic regression or gradient boosting over genes and mutations.
+- [ ] Build AMRFinderPlus marker lookup using available resistance features.
+- [ ] Train and evaluate a gene/resistance-feature-only logistic regression or gradient-boosting baseline.
+- [ ] Compare a gene-plus-mutation model if the sequence-backed pilot succeeds.
+
 ### Rare-disease baseline
 
-- HPO semantic similarity.
+- [ ] Implement HPO semantic-similarity ranking.
 ### AMR research model
 
 Implement and compare:
@@ -313,9 +317,8 @@ The project is complete when:
 
 ## Immediate Next Steps
 
-1. Install backend dependencies correctly from `backend`.
-2. Add the PostgreSQL and Prisma schema.
-3. Replace temporary in-memory API responses with database-backed analysis records.
-4. Add AMR and rare-disease preprocessing pipelines.
-5. Implement baseline evaluation scripts.
-6. Connect the UI to persisted analysis history.
+1. Replace the unavailable assembly and verify 100 usable FASTA files.
+2. Run the supported mutation-analysis tools on the pilot, then link and validate any calls against AMR observations.
+3. Refresh the processing report warning so it matches the completed 10,000-record feature extraction.
+4. Build and evaluate the gene/resistance-feature-only AMR baseline and the HPO semantic-similarity baseline.
+5. Continue with database persistence, API integration, frontend workflows, evaluation, and deployment tasks.

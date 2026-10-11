@@ -1,5 +1,5 @@
 import { mkdir, writeFile, stat, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
@@ -9,23 +9,24 @@ const root = new URL('../data/', import.meta.url);
 const dataDirectory = fileURLToPath(root);
 const execFileAsync = promisify(execFile);
 const targets = [
-  { name: 'hp.json', urls: ['https://github.com/obophenotype/human-phenotype-ontology/releases/latest/download/hp.json'], role: 'HPO ontology reference' },
-  { name: 'hpo_annotations.hpoa', urls: ['https://purl.obolibrary.org/obo/hp/hpoa/phenotype.hpoa'], role: 'HPO disease annotations' },
-  { name: 'mondo.json', urls: ['https://github.com/monarch-initiative/mondo/releases/latest/download/mondo.json'], role: 'MONDO disease ontology' },
-  { name: 'monarch_disease_phenotype_associations.json', urls: ['https://api.monarchinitiative.org/v3/api/association/?limit=100'], role: 'Monarch disease-phenotype associations (bounded public export)' },
-  { name: 'phenopacket-store.zip', urls: ['https://github.com/monarch-initiative/phenopacket-store/archive/refs/heads/main.zip'], role: 'Public Phenopacket examples and benchmark cases', binary: true },
-  { name: 'orphadata_disease.xml', urls: ['https://www.orphadata.com/data/xml/en_product1.xml'], role: 'Orphadata disease resource (licensing subject to review)' },
-  { name: 'amrfinder_reference_genes.tsv', urls: ['https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/ReferenceGeneCatalog.txt'], role: 'AMRFinderPlus resistance reference catalog' },
-  { name: 'bvbrc_genome_metadata.json', urls: ['https://www.bv-brc.org/api/genome/?limit(1000)'], role: 'BV-BRC genome metadata (bounded export)' },
-  { name: 'bvbrc_genome_amr.json', urls: ['https://www.bv-brc.org/api/genome_amr/?limit(10000)'], role: 'BV-BRC antimicrobial resistance and susceptibility records (bounded export)' },
-  { name: 'ncbi_pathogen_resistance_metadata.json', urls: ['https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/version.txt'], role: 'NCBI pathogen resistance database version metadata' },
+  { name: 'rare_disease/hp.json', urls: ['https://github.com/obophenotype/human-phenotype-ontology/releases/latest/download/hp.json'], role: 'HPO ontology reference' },
+  { name: 'rare_disease/hpo_annotations.hpoa', urls: ['https://purl.obolibrary.org/obo/hp/hpoa/phenotype.hpoa'], role: 'HPO disease annotations' },
+  { name: 'rare_disease/mondo.json', urls: ['https://github.com/monarch-initiative/mondo/releases/latest/download/mondo.json'], role: 'MONDO disease ontology' },
+  { name: 'rare_disease/monarch_disease_phenotype_associations.json', urls: ['https://api.monarchinitiative.org/v3/api/association/?limit=100'], role: 'Monarch disease-phenotype associations (bounded public export)' },
+  { name: 'rare_disease/phenopacket-store.zip', urls: ['https://github.com/monarch-initiative/phenopacket-store/archive/refs/heads/main.zip'], role: 'Public Phenopacket examples and benchmark cases', binary: true },
+  { name: 'rare_disease/orphadata_disease.xml', urls: ['https://www.orphadata.com/data/xml/en_product1.xml'], role: 'Orphadata disease resource (licensing subject to review)' },
   { name: 'resfinder_db.zip', urls: ['https://bitbucket.org/genomicepidemiology/resfinder_db/get/master.zip'], role: 'ResFinder resistance reference annotations', binary: true }
 ];
 await mkdir(dataDirectory, { recursive: true });
-const manifest = { downloaded_at: new Date().toISOString(), sources: [] };
+const existingManifest = await readFile(join(dataDirectory, 'manifest.json'), 'utf8')
+  .then(content => JSON.parse(content))
+  .catch(() => ({ sources: [] }));
+const amrSources = existingManifest.sources?.filter(source => source.name.startsWith('amr_10k/') || source.name.startsWith('amr_2m/')) || [];
+const manifest = { downloaded_at: new Date().toISOString(), sources: amrSources };
 for (const target of targets) {
   const destination = join(dataDirectory, target.name);
   try {
+    await mkdir(dirname(destination), { recursive: true });
     let sourceUrl;
     let transport = 'fetch';
     let content;

@@ -6,9 +6,13 @@ import { promisify } from 'node:util';
 
 const root = fileURLToPath(new URL('../data/', import.meta.url));
 const outputDirectory = join(root, 'processed');
+const amrOutputDirectory = join(root, 'amr_10k', 'processed');
+const rareDiseaseOutputDirectory = join(root, 'rare_disease', 'processed');
 const execFileAsync = promisify(execFile);
 const readJson = async name => JSON.parse(await readFile(join(root, name), 'utf8'));
 const writeJson = async (name, value) => writeFile(join(outputDirectory, name), `${JSON.stringify(value, null, 2)}\n`);
+const writeAmrJson = async (name, value) => writeFile(join(amrOutputDirectory, name), `${JSON.stringify(value, null, 2)}\n`);
+const writeRareDiseaseJson = async (name, value) => writeFile(join(rareDiseaseOutputDirectory, name), `${JSON.stringify(value, null, 2)}\n`);
 const text = value => String(value ?? '').trim();
 const lower = value => text(value).toLowerCase();
 const hash = value => [...text(value)].reduce((total, character) => ((total * 31) + character.charCodeAt(0)) % 1000003, 7);
@@ -33,6 +37,7 @@ function normalizeAntibiotic(value) {
 
 function normalizeLabel(value) {
   const normalized = lower(value);
+  if (normalized.startsWith('nonsuscept')) return 'nonsusceptible';
   if (normalized.startsWith('resist')) return 'resistant';
   if (normalized.startsWith('suscept')) return 'susceptible';
   if (normalized.startsWith('intermed')) return 'intermediate';
@@ -70,13 +75,22 @@ function normalizeAmrRecord(record) {
   const features = featureValues(record);
   const genomeId = text(record.genome_id || record.genome_identifier || record.genome);
   const antibiotic = normalizeAntibiotic(record.antibiotic || record.drug);
-  const label = normalizeLabel(record.resistant_phenotype || record.phenotype || record.resistance);
+  const rawPhenotype = text(record.resistant_phenotype || record.phenotype || record.resistance);
+  const label = normalizeLabel(rawPhenotype);
+  const evidence = text(record.evidence) || 'unspecified';
+  const evidenceClass = lower(evidence).includes('laboratory') ? 'laboratory' : lower(evidence).includes('computational') ? 'computational' : 'other';
   return {
     source_id: text(record.id) || `${genomeId}:${antibiotic}`,
     genome_id: genomeId || null,
     organism: normalizeOrganism(record),
     antibiotic,
     label,
+    raw_phenotype: rawPhenotype || null,
+    evidence,
+    evidence_class: evidenceClass,
+    label_evidence: rawPhenotype ? evidenceClass : null,
+    computational_method: text(record.computational_method) || null,
+    computational_method_version: text(record.computational_method_version) || null,
     genes: features.filter(value => !/(mutation|variant|allele)/i.test(value)),
     mutations: features.filter(value => /(mutation|variant|allele)/i.test(value)),
     collection_year: explicitYear(record),
@@ -121,10 +135,12 @@ function normalizeHpoAnnotation(fields, header) {
   };
 }
 
-const amrSource = await readJson('bvbrc_genome_amr.json');
-const ontology = await readJson('hp.json');
-const annotationText = await readFile(join(root, 'hpo_annotations.hpoa'), 'utf8');
+const amrSource = await readJson('amr_10k/bvbrc_genome_amr.json');
+const ontology = await readJson('rare_disease/hp.json');
+const annotationText = await readFile(join(root, 'rare_disease', 'hpo_annotations.hpoa'), 'utf8');
 await mkdir(outputDirectory, { recursive: true });
+await mkdir(amrOutputDirectory, { recursive: true });
+await mkdir(rareDiseaseOutputDirectory, { recursive: true });
 
 async function fetchGenomeMetadata(ids) {
   const metadata = new Map();
@@ -242,13 +258,13 @@ const normalizedSamplePhenotypes = samplePhenotypes.map(input => {
   return { input, hpo_id: partial?.id || null, matched_term: partial?.name || null, match_type: exact ? 'exact-or-synonym' : partial ? 'partial' : 'unmatched' };
 });
 
-await writeJson('amr_normalized.json', uniqueAmr);
-await writeJson('amr_conflicts.json', conflicts);
-await writeJson('hpo_term_index.json', termNodes);
-await writeJson('hpo_graph.json', { nodes: termNodes.map(term => term.id), edges: graphEdges });
-await writeJson('rare_disease_profiles.json', diseaseProfiles);
-await writeJson('rare_disease_robustness_samples.json', robustness);
-await writeJson('rare_disease_input_normalization_sample.json', { inputs: samplePhenotypes, normalized: normalizedSamplePhenotypes });
+await writeAmrJson('amr_normalized.json', uniqueAmr);
+await writeAmrJson('amr_conflicts.json', conflicts);
+await writeRareDiseaseJson('hpo_term_index.json', termNodes);
+await writeRareDiseaseJson('hpo_graph.json', { nodes: termNodes.map(term => term.id), edges: graphEdges });
+await writeRareDiseaseJson('rare_disease_profiles.json', diseaseProfiles);
+await writeRareDiseaseJson('rare_disease_robustness_samples.json', robustness);
+await writeRareDiseaseJson('rare_disease_input_normalization_sample.json', { inputs: samplePhenotypes, normalized: normalizedSamplePhenotypes });
 await writeJson('processing_report.json', {
   generated_at: new Date().toISOString(),
   amr: { source_records: amrSource.length, normalized_records: normalizedAmr.length, genome_metadata_matches: genomeMetadata.size, genomes_with_resistance_feature_calls: resistanceFeatures.size, resistance_feature_calls: [...resistanceFeatures.values()].reduce((total, items) => total + items.length, 0), deduplicated_records: uniqueAmr.length, conflicts: conflicts.length, missing_genome_feature_links: uniqueAmr.filter(record => record.feature_status !== 'provided-by-source').length, split_counts: { temporal: uniqueAmr.filter(record => record.split.temporal !== 'unassigned-missing-year').length, laboratory: uniqueAmr.filter(record => record.split.laboratory).length, geography: uniqueAmr.filter(record => record.split.geography).length } },

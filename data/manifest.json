@@ -1,8 +1,39 @@
 {
-  "downloaded_at": "2026-10-08T13:31:41.461Z",
+  "downloaded_at": "2026-10-09T11:40:42.537Z",
   "sources": [
     {
-      "name": "hp.json",
+      "name": "amr_10k/bvbrc_genome_amr.json",
+      "url": "https://www.bv-brc.org/api/genome_amr/?limit(10000)",
+      "role": "BV-BRC antimicrobial resistance and susceptibility records (bounded export)",
+      "status": "downloaded",
+      "accessed_at": "2026-10-08T13:31:41.461Z",
+      "version": "API snapshot accessed 2026-10-08; no pinned data release recorded",
+      "license_or_reuse_terms": "BV-BRC states public data is freely available without restriction on use; retain provenance and check source-specific rights for integrated data.",
+      "transformations_applied": "None to downloaded source artifact; bounded sample of 10000 records, not the full BV-BRC catalog; downstream normalization, deduplication, metadata joining, and feature extraction are described in data/processed/processing_report.json.",
+      "sample_scope": "Bounded 10000-record export; not the complete BV-BRC catalog.",
+      "transport": "curl-insecure-fallback",
+      "bytes": 5546058,
+      "sha256": "4824d40f2caccc580c1bb8c093ed8d7c678d05503dacdc9cbbc31a627e272260"
+    },
+    {
+      "name": "amr_2m/bvbrc_genome_amr.json",
+      "url": "https://www.bv-brc.org/api/genome_amr/",
+      "role": "Capped prefix of the public BV-BRC AMR table",
+      "status": "downloaded",
+      "accessed_at": "2026-10-09T11:09:56.567Z",
+      "version": "API snapshot accessed 2026-10-09; no pinned data release recorded",
+      "license_or_reuse_terms": "BV-BRC states public data is freely available without restriction on use; retain provenance and check source-specific rights for integrated data.",
+      "transformations_applied": "First 2,000,000 records preserved in API cursor order from an interrupted paginated export; raw source fields retained. Stored separately from the 10,000-record starter cohort.",
+      "sample_scope": "Capped prefix of 2000000 records; API reported 17,634,751 total records.",
+      "transport": "curl-insecure-fallback",
+      "record_count": 2000000,
+      "api_reported_total": 17634751,
+      "export_complete": false,
+      "bytes": 1154341087,
+      "sha256": "df549a59323570baadd4997d6bc4464077b502af476672a847853159becc03ab"
+    },
+    {
+      "name": "rare_disease/hp.json",
       "url": "https://github.com/obophenotype/human-phenotype-ontology/releases/latest/download/hp.json",
       "role": "HPO ontology reference",
       "status": "downloaded",
@@ -11,7 +42,7 @@
       "sha256": "a7b3a012e7b4007a35a7cf8da35f2373b54cc16907f80d13d62470d31f833501"
     },
     {
-      "name": "hpo_annotations.hpoa",
+      "name": "rare_disease/hpo_annotations.hpoa",
       "url": "https://purl.obolibrary.org/obo/hp/hpoa/phenotype.hpoa",
       "role": "HPO disease annotations",
       "status": "downloaded",
@@ -20,7 +51,7 @@
       "sha256": "e89aa39c8f97bf5a52c5d160f9250a603681d630ade8ec2679d84ac5aece1f72"
     },
     {
-      "name": "mondo.json",
+      "name": "rare_disease/mondo.json",
       "url": "https://github.com/monarch-initiative/mondo/releases/latest/download/mondo.json",
       "role": "MONDO disease ontology",
       "status": "downloaded",
@@ -29,7 +60,7 @@
       "sha256": "ddbf0b88d8a91007ed55a01d579a418f68940f7f897d3dd55750ba966b3912ab"
     },
     {
-      "name": "monarch_disease_phenotype_associations.json",
+      "name": "rare_disease/monarch_disease_phenotype_associations.json",
       "url": "https://api.monarchinitiative.org/v3/api/association/?limit=100",
       "role": "Monarch disease-phenotype associations (bounded public export)",
       "status": "downloaded",
@@ -38,58 +69,34 @@
       "sha256": "47f1c3a1a1af3856b59a013b7352102d09381961248e6696877c262b0204d359"
     },
     {
-      "name": "phenopacket-store.zip",
+      "name": "rare_disease/phenopacket-store.zip",
       "url": "https://github.com/monarch-initiative/phenopacket-store/archive/refs/heads/main.zip",
-      "role": "Public Phenopacket examples and benchmark cases",
-      "status": "downloaded",
+      "role": "Superseded unpinned Phenopacket Store snapshot retained for audit",
+      "status": "retained-unpinned-snapshot",
       "transport": "fetch",
       "bytes": 24171600,
       "sha256": "d15e79ae7cd763bc47c7e90d2c0045097ab0398441f6c0d30133a52c70193f34"
     },
     {
-      "name": "orphadata_disease.xml",
+      "name": "rare_disease/phenopacket-store-0.1.27.zip",
+      "url": "https://github.com/monarch-initiative/phenopacket-store/releases/download/0.1.27/all_phenopackets.zip",
+      "role": "Pinned Phenopacket Store release used for exploratory case-level evaluation",
+      "status": "downloaded",
+      "accessed_at": "2026-10-10",
+      "version": "0.1.27; commit 3f3619800b2c949f8bfb457a122346c2fae7e482",
+      "license_or_reuse_terms": "Repository license is BSD-3-Clause; individual case-source publication terms may differ and require review before redistribution.",
+      "transport": "GitHub release asset",
+      "bytes": 19431098,
+      "sha256": "d0c70005bb09b87035087516252b6b539fbc0415be7c664b73c9cde7eedf205a"
+    },
+    {
+      "name": "rare_disease/orphadata_disease.xml",
       "url": "https://www.orphadata.com/data/xml/en_product1.xml",
       "role": "Orphadata disease resource (licensing subject to review)",
       "status": "downloaded",
       "transport": "curl-insecure-fallback",
       "bytes": 54026799,
       "sha256": "df8d562a0c6011af36a74eb4000ce81ca7d723e8031010819fb71727c0962bbb"
-    },
-    {
-      "name": "amrfinder_reference_genes.tsv",
-      "url": "https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/ReferenceGeneCatalog.txt",
-      "role": "AMRFinderPlus resistance reference catalog",
-      "status": "downloaded",
-      "transport": "curl-insecure-fallback",
-      "bytes": 2330416,
-      "sha256": "fa41ade01712841e639c91163243bace1c34755b927e69e0c8678540268a7fd4"
-    },
-    {
-      "name": "bvbrc_genome_metadata.json",
-      "url": "https://www.bv-brc.org/api/genome/?limit(1000)",
-      "role": "BV-BRC genome metadata (bounded export)",
-      "status": "downloaded",
-      "transport": "curl-insecure-fallback",
-      "bytes": 1819986,
-      "sha256": "d3951bd03e65102541bd7cc234523d0d044acaaa2a8020cb3fd605ab5e209d52"
-    },
-    {
-      "name": "bvbrc_genome_amr.json",
-      "url": "https://www.bv-brc.org/api/genome_amr/?limit(10000)",
-      "role": "BV-BRC antimicrobial resistance and susceptibility records (bounded export)",
-      "status": "downloaded",
-      "transport": "curl-insecure-fallback",
-      "bytes": 5546058,
-      "sha256": "4824d40f2caccc580c1bb8c093ed8d7c678d05503dacdc9cbbc31a627e272260"
-    },
-    {
-      "name": "ncbi_pathogen_resistance_metadata.json",
-      "url": "https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/version.txt",
-      "role": "NCBI pathogen resistance database version metadata",
-      "status": "downloaded",
-      "transport": "curl-insecure-fallback",
-      "bytes": 13,
-      "sha256": "43ad0274317a2cbf80e01626e3ae6084a02f471be2f870d57fdbe2d35761911a"
     },
     {
       "name": "resfinder_db.zip",

@@ -1,1 +1,1 @@
-{"name":"signallab-api","private":true,"type":"module","scripts":{"dev":"node server.js"},"dependencies":{"cors":"latest","express":"latest"}}
+{"name":"signallab-api","private":true,"type":"module","scripts":{"dev":"node --env-file-if-exists=../.env server.js","start":"node server.js"},"dependencies":{"cors":"latest","express":"latest","pg":"^8.16.3"}}

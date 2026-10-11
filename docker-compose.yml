@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5173:80"
+      - "127.0.0.1:5173:80"
     depends_on:
       backend:
         condition: service_healthy
@@ -16,14 +16,23 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     environment:
+      API_HOST: 0.0.0.0
       API_PORT: 8787
+      ANALYSIS_RETENTION_DAYS: ${ANALYSIS_RETENTION_DAYS:-90}
       ML_SERVICE_URL: http://ml-service:8000
       DATABASE_URL: postgresql://signallab:signallab@postgres:5432/signallab
+      SEQUENCE_CALLER_ENABLED: "true"
+      SEQUENCE_WORK_DIR: /sequence-work
+      SEQUENCE_WORK_VOLUME: devops_sequence-work
+    volumes:
+      - ./data/models/amr_scope.json:/data/models/amr_scope.json:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - sequence-work:/sequence-work
     ports:
-      - "8787:8787"
+      - "127.0.0.1:8787:8787"
     depends_on:
       ml-service:
         condition: service_healthy
@@ -39,8 +48,31 @@ services:
     build:
       context: ./ml-service
       dockerfile: Dockerfile
+    environment:
+      AMR_MODEL_PATH: /app/models/amr_feature_baseline.joblib
+      AMR_MODEL_REPORT_PATH: /app/models/amr_feature_baseline_metrics.json
+      AMR_MODEL_VERSION: amr-sgd-feature-baseline-1
+      AMR_MODEL_SHA256: 829b68359ac0b2d65cf22be19643be4435c786d0e8aade40af94ba58bf9b94d9
+      AMR_DATASET_VERSION: amr-baseline-cohort-a3c7b549296846c1
+      AMR_DATASET_SHA256: a3c7b549296846c61eca74d2733c048fcbf1a2aa809f11c86fe673e7bdf6141e
+      AMR_VOCABULARY_PATH: /app/models/amr_feature_vocabulary.json
+      AMR_VOCABULARY_SHA256: d0712991dc7feb9de593ec68baa10d63fedf398105edea99e5385d4c3fc5701c
+      AMR_GENOME_CATALOG_PATH: /app/models/amr_genome_catalog.sqlite
+      AMR_GENOME_CATALOG_MANIFEST_PATH: /app/models/amr_genome_catalog.manifest.json
+      RARE_DISEASE_PROFILES_PATH: /app/rare_disease/rare_disease_profiles.json
+      HPO_GRAPH_PATH: /app/rare_disease/hpo_graph.json
+      HPO_TERM_INDEX_PATH: /app/rare_disease/hpo_term_index.json
+    volumes:
+      - ./data/models/amr_feature_baseline.joblib:/app/models/amr_feature_baseline.joblib:ro
+      - ./data/models/amr_feature_baseline_metrics.json:/app/models/amr_feature_baseline_metrics.json:ro
+      - ./data/models/amr_feature_vocabulary.json:/app/models/amr_feature_vocabulary.json:ro
+      - ./data/models/amr_genome_catalog.sqlite:/app/models/amr_genome_catalog.sqlite:ro
+      - ./data/models/amr_genome_catalog.manifest.json:/app/models/amr_genome_catalog.manifest.json:ro
+      - ./data/rare_disease/processed/rare_disease_profiles.json:/app/rare_disease/rare_disease_profiles.json:ro
+      - ./data/rare_disease/processed/hpo_graph.json:/app/rare_disease/hpo_graph.json:ro
+      - ./data/rare_disease/processed/hpo_term_index.json:/app/rare_disease/hpo_term_index.json:ro
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
@@ -54,7 +86,7 @@ services:
       POSTGRES_PASSWORD: signallab
       POSTGRES_DB: signallab
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -65,3 +97,5 @@ services:
 
 volumes:
   postgres-data:
+  sequence-work:
+    name: devops_sequence-work

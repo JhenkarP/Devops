@@ -1,0 +1,114 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Check Phase 2 downloader process status",
+			"type": "shell",
+			"command": "tasklist.exe",
+			"args": [
+				"/FI",
+				"IMAGENAME eq node.exe",
+				"/FO",
+				"LIST"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Identify Node process commands",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-CimInstance Win32_Process | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check built-in Node SQLite support",
+			"type": "shell",
+			"command": "node.exe",
+			"args": [
+				"-e",
+				"console.log(process.version, typeof process.getBuiltinModule(process.argv[1]))",
+				"node:sqlite"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check available disk space",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-PSDrive -Name C | Select-Object Name,Free,Used | ConvertTo-Json -Compress"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check AMR processor state",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -match 'process-bvbrc-amr' } | Select-Object ProcessId,Name,CommandLine | ConvertTo-Json -Compress"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Node processor process",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-Process node -ErrorAction SilentlyContinue | Select-Object Id,StartTime,CPU | ConvertTo-Json -Compress"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Identify AMR processor command",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine | Out-String -Width 400 | findstr.exe /i process-bvbrc-amr"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Wait for AMR processing run",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Wait-Process -Id 30224 -ErrorAction SilentlyContinue; Get-Process -Id 30224 -ErrorAction SilentlyContinue | Select-Object Id,CPU | ConvertTo-Json -Compress"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check AMR run completion",
+			"type": "shell",
+			"command": "powershell.exe",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Get-Process -Id 30224 -ErrorAction SilentlyContinue | Select-Object Id,CPU | ConvertTo-Json -Compress"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+	]
+}

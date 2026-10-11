@@ -1,0 +1,16 @@
+**
+!package.json
+!package-lock.json
+!index.html
+!vite.config.js
+!nginx.conf
+!src/
+!src/**
+!backend/
+!backend/api-contract.js
+!shared/
+!shared/**
+!scripts/
+!scripts/**
+!public/
+!public/**

@@ -1,0 +1,10 @@
+**
+!package.json
+!package-lock.json
+!server.js
+!database.js
+!api-contract.js
+!amr-scope.js
+!sequence-preflight.js
+!migrations/
+!migrations/**
